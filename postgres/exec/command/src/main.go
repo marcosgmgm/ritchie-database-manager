@@ -9,7 +9,6 @@ import (
 )
 
 func main() {
-	commandType := os.Getenv("COMMAND_TYPE")
 	dbHost := os.Getenv("DB_HOST")
 	dbName := os.Getenv("DB_NAME")
 	dbUsername := os.Getenv("DB_USERNAME")
@@ -18,7 +17,6 @@ func main() {
 	dbSsl := os.Getenv("DB_SSL")
 
 	formula.Formula{
-		CommandType: commandType,
 		DBHost:      dbHost,
 		DBName:      dbName,
 		DBUsername:  dbUsername,

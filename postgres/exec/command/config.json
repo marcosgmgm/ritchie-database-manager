@@ -2,18 +2,6 @@
   "dockerImageBuilder": "ritclizup/rit-go-builder",
   "inputs": [
     {
-      "default": "query",
-      "items": [
-        "query",
-        "exec"
-      ],
-      "label": "Select sql command type? ",
-      "name": "command_type",
-      "required": true,
-      "tutorial": "exec for insert, update, delete or other command e query para select",
-      "type": "text"
-    },
-    {
       "name": "db_host",
       "type": "CREDENTIAL_PG_HOST"
     },

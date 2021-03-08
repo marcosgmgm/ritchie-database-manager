@@ -18,19 +18,12 @@ import (
 const exec = "exec"
 
 type Formula struct {
-	CommandType string
 	DBHost      string
 	DBName      string
 	DBUsername  string
 	DBPassword  string
 	DBPort      string
 	DBSsl       string
-}
-
-type column struct {
-	name   string
-	cType  string
-	length int64
 }
 
 type selectTableMapper struct {}
@@ -65,8 +58,6 @@ func (t selectTableMapper) MapRows(rows *sql.Rows) ([]interface{}, error) {
 }
 
 func (f Formula) Run(writer io.Writer) {
-
-
 	pc, err := provider.NewPostgresConnector(f.DBHost, f.DBPort, f.DBUsername, f.DBPassword, f.DBName, f.DBSsl)
 	if err != nil {
 		result := color.FgRed.Render(fmt.Sprintf("error: %s.\n", err))
@@ -95,7 +86,7 @@ func (f Formula) Run(writer io.Writer) {
 		return
 	}
 
-	_, err = sqlparser.Parse(sql)
+	stmt, err := sqlparser.Parse(sql)
 	if err != nil {
 		if _, err := fmt.Fprintf(writer, color.FgGreen.Render("sql not valid")); err != nil {
 			panic(err)
@@ -103,10 +94,11 @@ func (f Formula) Run(writer io.Writer) {
 		return
 	}
 
-	if f.CommandType == exec {
-		execSql(pe, sql, writer)
-	} else {
+	switch stmt.(type) {
+	case *sqlparser.Select:
 		querySql(pe, sql, writer)
+	default:
+		execSql(pe, sql, writer)
 	}
 }
 
