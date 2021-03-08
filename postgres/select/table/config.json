@@ -1,0 +1,29 @@
+{
+  "dockerImageBuilder": "ritclizup/rit-go-builder",
+  "inputs": [
+    {
+      "name": "db_host",
+      "type": "CREDENTIAL_PG_HOST"
+    },
+    {
+      "name": "db_name",
+      "type": "CREDENTIAL_PG_DBNAME"
+    },
+    {
+      "name": "db_username",
+      "type": "CREDENTIAL_PG_USERNAME"
+    },
+    {
+      "name": "db_password",
+      "type": "CREDENTIAL_PG_PASSWORD"
+    },
+    {
+      "name": "db_port",
+      "type": "CREDENTIAL_PG_PORT"
+    },
+    {
+      "name": "db_ssl",
+      "type": "CREDENTIAL_PG_SSL"
+    }
+  ]
+}

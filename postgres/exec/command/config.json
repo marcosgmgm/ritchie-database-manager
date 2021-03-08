@@ -1,0 +1,41 @@
+{
+  "dockerImageBuilder": "ritclizup/rit-go-builder",
+  "inputs": [
+    {
+      "default": "query",
+      "items": [
+        "query",
+        "exec"
+      ],
+      "label": "Select sql command type? ",
+      "name": "command_type",
+      "required": true,
+      "tutorial": "exec for insert, update, delete or other command e query para select",
+      "type": "text"
+    },
+    {
+      "name": "db_host",
+      "type": "CREDENTIAL_PG_HOST"
+    },
+    {
+      "name": "db_name",
+      "type": "CREDENTIAL_PG_DBNAME"
+    },
+    {
+      "name": "db_username",
+      "type": "CREDENTIAL_PG_USERNAME"
+    },
+    {
+      "name": "db_password",
+      "type": "CREDENTIAL_PG_PASSWORD"
+    },
+    {
+      "name": "db_port",
+      "type": "CREDENTIAL_PG_PORT"
+    },
+    {
+      "name": "db_ssl",
+      "type": "CREDENTIAL_PG_SSL"
+    }
+  ]
+}
