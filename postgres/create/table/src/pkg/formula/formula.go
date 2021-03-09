@@ -20,6 +20,7 @@ type Formula struct {
 	DBPassword string
 	DBPort     string
 	DBSsl      string
+	DBSchema   string
 }
 
 type column struct {
@@ -75,7 +76,7 @@ func (c Formula) Run(writer io.Writer) {
 	}
 	pe := provider.NewPostgresExecutor(pc)
 
-	_, err = pe.Exec(sql)
+	_, err = pe.Exec(c.DBSchema, sql)
 	if err != nil {
 		result := color.FgRed.Render(fmt.Sprintf("error: %s.\n", err))
 		if _, err := fmt.Fprintf(writer, result); err != nil {

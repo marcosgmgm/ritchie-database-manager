@@ -30,6 +30,10 @@
     {
       "name": "db_ssl",
       "type": "CREDENTIAL_PG_SSL"
+    },
+    {
+      "name": "db_schema",
+      "type": "CREDENTIAL_PG_SCHEMA"
     }
   ]
 }

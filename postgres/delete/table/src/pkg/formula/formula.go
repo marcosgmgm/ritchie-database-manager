@@ -25,6 +25,7 @@ type Formula struct {
 	DBPassword string
 	DBPort     string
 	DBSsl      string
+	DBSchema   string
 }
 
 type stringMapper struct {}
@@ -94,7 +95,7 @@ func (f Formula) Run(writer io.Writer) {
 	go pc.PingLoop()
 
 	pe := provider.NewPostgresExecutor(pc)
-	tableSelect, err := selectTable(pe)
+	tableSelect, err := selectTable(f.DBSchema, pe)
 	if err != nil {
 		result := color.FgRed.Render(fmt.Sprintf("error select table: %s.\n", err))
 		if _, err := fmt.Fprintf(writer, result); err != nil {
@@ -131,12 +132,12 @@ func (f Formula) Run(writer io.Writer) {
 		return
 	}
 
-	executeDelete(pe, sql, writer)
+	executeDelete(f.DBSchema, pe, sql, writer)
 
 }
 
-func executeDelete(pe provider.PostgresExecutor, sql string, writer io.Writer) {
-	r, err := pe.Exec(sql)
+func executeDelete(schema string, pe provider.PostgresExecutor, sql string, writer io.Writer) {
+	r, err := pe.Exec(schema, sql)
 	if err != nil {
 		result := color.FgRed.Render(fmt.Sprintf("error exec sql: %s.\n", err))
 		if _, err := fmt.Fprintf(writer, result); err != nil {
@@ -199,9 +200,9 @@ func whereColumns(pe provider.PostgresExecutor, table string) (string, error) {
 	return "", nil
 }
 
-func selectTable(pe provider.PostgresExecutor) (string, error) {
+func selectTable(schema string, pe provider.PostgresExecutor) (string, error) {
 	mapper := stringMapper{}
-	t, err := pe.Query(mapper, sqlTables)
+	t, err := pe.Query(mapper, schema, sqlTables)
 	if err != nil {
 		return "", err
 	}

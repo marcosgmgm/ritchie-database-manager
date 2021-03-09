@@ -26,6 +26,7 @@ type Formula struct {
 	DBPassword string
 	DBPort     string
 	DBSsl      string
+	DBSchema   string
 }
 
 type stringMapper struct {}
@@ -95,7 +96,7 @@ func (f Formula) Run(writer io.Writer) {
 	go pc.PingLoop()
 
 	pe := provider.NewPostgresExecutor(pc)
-	tableSelect, err := selectTable(pe)
+	tableSelect, err := selectTable(f.DBSchema, pe)
 	if err != nil {
 		result := color.FgRed.Render(fmt.Sprintf("error select table: %s.\n", err))
 		if _, err := fmt.Fprintf(writer, result); err != nil {
@@ -103,7 +104,7 @@ func (f Formula) Run(writer io.Writer) {
 		}
 		return
 	}
-	ic, err := valuesColumn(pe, tableSelect)
+	ic, err := valuesColumn(f.DBSchema, pe, tableSelect)
 	if err != nil {
 		result := color.FgRed.Render(fmt.Sprintf("error clause insert: %s.\n", err))
 		if _, err := fmt.Fprintf(writer, result); err != nil {
@@ -132,12 +133,12 @@ func (f Formula) Run(writer io.Writer) {
 		return
 	}
 
-	executeInsert(pe, sql, writer)
+	executeInsert(f.DBSchema, pe, sql, writer)
 
 }
 
-func executeInsert(pe provider.PostgresExecutor, sql string, writer io.Writer) {
-	r, err := pe.Exec(sql)
+func executeInsert(schema string, pe provider.PostgresExecutor, sql string, writer io.Writer) {
+	r, err := pe.Exec(schema, sql)
 	if err != nil {
 		result := color.FgRed.Render(fmt.Sprintf("error exec sql: %s.\n", err))
 		if _, err := fmt.Fprintf(writer, result); err != nil {
@@ -158,9 +159,9 @@ func executeInsert(pe provider.PostgresExecutor, sql string, writer io.Writer) {
 	}
 }
 
-func valuesColumn(pe provider.PostgresExecutor, table string) (string, error) {
+func valuesColumn(schema string, pe provider.PostgresExecutor, table string) (string, error) {
 	mapper := stringMapper{}
-	cols, err := pe.Query(mapper, sqlCol, table)
+	cols, err := pe.Query(mapper, schema, sqlCol, table)
 	if err != nil {
 		return "", err
 	}
@@ -179,9 +180,9 @@ func valuesColumn(pe provider.PostgresExecutor, table string) (string, error) {
 	return clause, nil
 }
 
-func selectTable(pe provider.PostgresExecutor) (string, error) {
+func selectTable(schema string, pe provider.PostgresExecutor) (string, error) {
 	mapper := stringMapper{}
-	t, err := pe.Query(mapper, sqlTables)
+	t, err := pe.Query(mapper, schema, sqlTables)
 	if err != nil {
 		return "", err
 	}

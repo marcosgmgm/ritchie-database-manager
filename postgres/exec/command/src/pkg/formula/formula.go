@@ -18,12 +18,13 @@ import (
 const exec = "exec"
 
 type Formula struct {
-	DBHost      string
-	DBName      string
-	DBUsername  string
-	DBPassword  string
-	DBPort      string
-	DBSsl       string
+	DBHost     string
+	DBName     string
+	DBUsername string
+	DBPassword string
+	DBPort     string
+	DBSsl      string
+	DBSchema   string
 }
 
 type selectTableMapper struct {}
@@ -96,14 +97,14 @@ func (f Formula) Run(writer io.Writer) {
 
 	switch stmt.(type) {
 	case *sqlparser.Select:
-		querySql(pe, sql, writer)
+		querySql(f.DBSchema, pe, sql, writer)
 	default:
-		execSql(pe, sql, writer)
+		execSql(f.DBSchema, pe, sql, writer)
 	}
 }
 
-func execSql(pe provider.PostgresExecutor, sql string, writer io.Writer) {
-	r, err := pe.Exec(sql)
+func execSql(schema string, pe provider.PostgresExecutor, sql string, writer io.Writer) {
+	r, err := pe.Exec(schema, sql)
 	if err != nil {
 		result := color.FgRed.Render(fmt.Sprintf("error exec sql: %s.\n", err))
 		if _, err := fmt.Fprintf(writer, result); err != nil {
@@ -124,8 +125,8 @@ func execSql(pe provider.PostgresExecutor, sql string, writer io.Writer) {
 	}
 }
 
-func querySql(pe provider.PostgresExecutor, sqlQuery string, writer io.Writer) {
-	resultTable, err := pe.Query(selectTableMapper{}, sqlQuery)
+func querySql(schema string, pe provider.PostgresExecutor, sqlQuery string, writer io.Writer) {
+	resultTable, err := pe.Query(selectTableMapper{}, schema, sqlQuery)
 	if err != nil {
 		result := color.FgRed.Render(fmt.Sprintf("error: %s.\n", err))
 		if _, err := fmt.Fprintf(writer, result); err != nil {

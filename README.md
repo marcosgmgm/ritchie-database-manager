@@ -23,7 +23,7 @@ This repository contains rit formulas to database manager which can be executed 
   > no
     yes
  Select a tag version:
-  > 1.0.1
+  > 1.0.2
  Set the priority: 2
 ```
 

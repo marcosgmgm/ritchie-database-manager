@@ -16,6 +16,7 @@ func main() {
 	dbPassword := os.Getenv("DB_PASSWORD")
 	dbPort := os.Getenv("DB_PORT")
 	dbSsl := os.Getenv("DB_SSL")
+	dbSchema := os.Getenv("DB_SCHEMA")
 
 	formula.Formula{
 		Table:      tableName,
@@ -25,5 +26,6 @@ func main() {
 		DBPassword: dbPassword,
 		DBPort:     dbPort,
 		DBSsl:      dbSsl,
+		DBSchema: dbSchema,
 	}.Run(os.Stdout)
 }
